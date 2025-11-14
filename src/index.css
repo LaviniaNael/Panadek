@@ -118,7 +118,6 @@ body {
   /* --- NEW: Footer Memory Button --- */
   .memory-box-button {
     @apply text-zinc-500 text-sm font-medium;
-    @apply transition-colors hover:text-green-500;
   }
 
   /* --- NEW: Memory Box Page --- */

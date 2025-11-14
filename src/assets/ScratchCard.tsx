@@ -1,18 +1,48 @@
+// src/assets/ScratchCard.tsx
 import React, { useRef, useEffect, useState } from "react";
-import type { ReactNode, MouseEvent, TouchEvent } from "react";
+import type { MouseEvent, TouchEvent } from "react";
+import "../index.css";
 
+// Define the component's props
 interface ScratchCardProps {
-  children: ReactNode;
   isMorning: boolean;
+  message: string;
+  onSave: (message: string) => void;
 }
 
-const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
+const ScratchCard: React.FC<ScratchCardProps> = ({
+  isMorning,
+  message,
+  onSave,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(false); // For the save button
   const isDrawing = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
 
-  // --- CANVAS DRAWING LOGIC (Unchanged from previous version) ---
+  // Audio Refs
+  const scratchAudioRef = useRef<HTMLAudioElement | null>(null);
+  const revealAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Effect for initializing sounds
+  useEffect(() => {
+    scratchAudioRef.current = new Audio("/scratch.mp3");
+    scratchAudioRef.current.loop = true;
+    scratchAudioRef.current.volume = 0.4;
+
+    revealAudioRef.current = new Audio("/reveal.mp3");
+    revealAudioRef.current.volume = 0.6;
+
+    return () => {
+      scratchAudioRef.current?.pause();
+      revealAudioRef.current?.pause();
+      scratchAudioRef.current = null;
+      revealAudioRef.current = null;
+    };
+  }, []);
+
+  // Effect for drawing the canvas (This was missing!)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -33,13 +63,13 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
       canvas.height
     );
     if (isMorning) {
-      gradient.addColorStop(0, "#be185d"); // pink-700
-      gradient.addColorStop(0.5, "#f472b6"); // pink-400
-      gradient.addColorStop(1, "#be185d"); // pink-700
+      gradient.addColorStop(0, "#be185d");
+      gradient.addColorStop(0.5, "#f472b6");
+      gradient.addColorStop(1, "#be185d");
     } else {
-      gradient.addColorStop(0, "#7f1d1d"); // red-900
-      gradient.addColorStop(0.5, "#dc2626"); // red-600
-      gradient.addColorStop(1, "#7f1d1d"); // red-900
+      gradient.addColorStop(0, "#7f1d1d");
+      gradient.addColorStop(0.5, "#dc2626");
+      gradient.addColorStop(1, "#7f1d1d");
     }
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -60,7 +90,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
     }
 
     // LABEL
-    ctx.font = "bold 20px tracking-widest";
+    ctx.font = "bold 20px tracking-widest sans-serif";
     ctx.fillStyle = "#ffffff";
     ctx.shadowColor = "rgba(0,0,0,0.3)";
     ctx.shadowBlur = 4;
@@ -73,6 +103,8 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
     );
     ctx.shadowBlur = 0;
   }, [isMorning]);
+
+  // --- Helper Functions (These were also missing!) ---
 
   const getPos = (
     e: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
@@ -99,11 +131,15 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
   ) => {
     isDrawing.current = true;
     lastPos.current = getPos(e);
+    if (!isRevealed) {
+      scratchAudioRef.current?.play().catch(() => {});
+    }
   };
 
   const stopScratching = () => {
     isDrawing.current = false;
-    checkReveal();
+    scratchAudioRef.current?.pause();
+    checkReveal(); // This function call is why 'checkReveal' is needed
   };
 
   const scratch = (
@@ -129,7 +165,9 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
     lastPos.current = currentPos;
   };
 
+  // This is the function that was 'declared but not read'
   const checkReveal = () => {
+    if (isRevealed) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -144,19 +182,32 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
 
     if (transparentPixels / (canvas.width * canvas.height) > 0.45) {
       setIsRevealed(true);
+      scratchAudioRef.current?.pause();
+      revealAudioRef.current?.play().catch(() => {});
     }
   };
-  // ---------------------------------------------------------
 
+  // Save Button Handler
+  const handleSaveClick = () => {
+    onSave(message);
+    setIsSaved(true);
+  };
+
+  // --- JSX ---
   return (
-    <div className="card-wrapper">
-      {/* Hidden Message Layer */}
+    <div className="card-wrapper relative">
       <div className="hidden-layer">
         <div className="glow-effect" />
-        <div className="relative z-10">{children}</div>
+        <div className="relative z-10">
+          {/* Use the message prop */}
+          <div className="message-container">
+            <span className="message-icon">{isMorning ? "🌸" : "🌹"}</span>
+            <p className="message-text">"{message}"</p>
+          </div>
+        </div>
       </div>
 
-      {/* Canvas Scratch Layer */}
+      {/* The event handlers were missing from the canvas tag! */}
       <canvas
         ref={canvasRef}
         className={`scratch-canvas ${isRevealed ? "revealed" : ""}`}
@@ -168,6 +219,17 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ children, isMorning }) => {
         onTouchEnd={stopScratching}
         onMouseLeave={stopScratching}
       />
+
+      {/* Save Button */}
+      {isRevealed && (
+        <button
+          className="save-button"
+          onClick={handleSaveClick}
+          disabled={isSaved}
+        >
+          {isSaved ? "Saved! 🤍" : "Save this note 🤍"}
+        </button>
+      )}
     </div>
   );
 };

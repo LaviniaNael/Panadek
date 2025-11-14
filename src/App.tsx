@@ -1,10 +1,20 @@
+// src/App.tsx
 import React, { useState, useEffect } from "react";
-import ScratchCard from "./assets/ScratchCard";
+import ScratchCard from "./assets/ScratchCard"; // Make sure this path is correct
+import MemoryBox from "./assets/MemoryBox"; // Make sure this path is correct
 import { morningMessages, nightMessages } from "./assets/messages";
+
+// Define the shape of a saved note
+export type SavedNote = {
+  id: number;
+  text: string;
+  date: string;
+};
 
 const App: React.FC = () => {
   const [isMorning, setIsMorning] = useState<boolean>(true);
   const [todaysMessage, setTodaysMessage] = useState<string>("");
+  const [view, setView] = useState<"card" | "memory">("card");
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -12,15 +22,45 @@ const App: React.FC = () => {
     setIsMorning(currentlyMorning);
 
     const messagesList = currentlyMorning ? morningMessages : nightMessages;
-    // Safety check if list is empty
     if (messagesList.length > 0) {
       const randomIndex = Math.floor(Math.random() * messagesList.length);
       setTodaysMessage(messagesList[randomIndex]);
     }
   }, []);
 
+  // UPDATED: Function to save a note to localStorage
+  const handleSaveNote = (message: string) => {
+    // Get existing notes (or empty array)
+    const existingNotes: SavedNote[] = JSON.parse(
+      localStorage.getItem("savedNotes") || "[]"
+    );
+
+    // NEW: Check for duplicates
+    const isDuplicate = existingNotes.some((note) => note.text === message);
+
+    if (isDuplicate) {
+      // Show your cute message!
+      alert("u already have this one saved baby");
+      return; // Stop the function here
+    }
+
+    // If not a duplicate, proceed with saving
+    const newNote: SavedNote = {
+      id: Date.now(),
+      text: message,
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+    };
+
+    const updatedNotes = [newNote, ...existingNotes];
+    localStorage.setItem("savedNotes", JSON.stringify(updatedNotes));
+
+    alert("Note saved to your Memory Box! 🤍");
+  };
+
   return (
-    // We apply the theme class here, and CSS handles the rest
     <div
       className={`app-container ${isMorning ? "theme-morning" : "theme-night"}`}
     >
@@ -36,15 +76,29 @@ const App: React.FC = () => {
       </header>
 
       <main className="main-content">
-        <ScratchCard isMorning={isMorning}>
-          <div className="message-container">
-            <span className="message-icon">{isMorning ? "🌸" : "🌹"}</span>
-            <p className="message-text">"{todaysMessage}"</p>
-          </div>
-        </ScratchCard>
+        {view === "card" ? (
+          <ScratchCard
+            isMorning={isMorning}
+            message={todaysMessage}
+            onSave={handleSaveNote}
+          />
+        ) : (
+          // UPDATED: Pass isMorning prop
+          <MemoryBox onClose={() => setView("card")} isMorning={isMorning} />
+        )}
       </main>
 
-      <footer className="app-footer">For my baby ❤️</footer>
+      <footer className="app-footer">
+        {view === "card" && (
+          <button
+            className="memory-box-button"
+            onClick={() => setView("memory")}
+          >
+            View Memory Box 📦
+          </button>
+        )}
+        <div className="mt-4">For my baby ❤️</div>
+      </footer>
     </div>
   );
 };

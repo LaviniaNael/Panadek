@@ -18,8 +18,8 @@ const MemoryBox: React.FC<MemoryBoxProps> = ({ onClose, isMorning }) => {
   }, []);
 
   // Set dynamic colors for both elements
-  const titleColorClass = isMorning ? "text-pink-400" : "text-red-500";
-  const dateColorClass = isMorning ? "text-pink-500" : "text-red-500";
+  const titleColorClass = isMorning ? "text-green-500" : "text-red-500";
+  const dateColorClass = isMorning ? "text-green-600" : "text-red-500";
 
   return (
     <div className="memory-box-container">

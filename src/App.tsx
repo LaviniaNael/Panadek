@@ -97,7 +97,13 @@ const App: React.FC = () => {
             View Memory Box 📦
           </button>
         )}
-        <div className="mt-4">For my baby ❤️</div>
+        <div className="mt-4">
+          For my baby{" "}
+          <span className={isMorning ? "text-zinc-200" : "text-red-500"}>
+            {" "}
+            ♥
+          </span>
+        </div>
       </footer>
     </div>
   );

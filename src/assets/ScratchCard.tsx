@@ -63,9 +63,9 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       canvas.height
     );
     if (isMorning) {
-      gradient.addColorStop(0, "#be185d");
-      gradient.addColorStop(0.5, "#f472b6");
-      gradient.addColorStop(1, "#be185d");
+      gradient.addColorStop(0, "#047a5bff"); // green-900
+      gradient.addColorStop(0.5, "#047857"); // green-700 (richer middle)
+      gradient.addColorStop(1, "#064e3b"); // green-900
     } else {
       gradient.addColorStop(0, "#7f1d1d");
       gradient.addColorStop(0.5, "#dc2626");
@@ -201,7 +201,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         <div className="relative z-10">
           {/* Use the message prop */}
           <div className="message-container">
-            <span className="message-icon">{isMorning ? "🌸" : "🌹"}</span>
+            <span className="message-icon">{isMorning ? "🦋" : "🌹"}</span>{" "}
             <p className="message-text">"{message}"</p>
           </div>
         </div>

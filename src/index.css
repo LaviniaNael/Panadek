@@ -3,9 +3,12 @@
 
 body {
   font-family: "Comic Relief", sans-serif;
+  /* Prevent pull-to-refresh on mobile which ruins the app feel */
+  overscroll-behavior-y: none;
 }
 
 @layer components {
+
   /* --- Main App Layout --- */
   .app-container {
     @apply min-h-screen flex flex-col items-center justify-center p-6 bg-zinc-900 text-zinc-200;
@@ -18,12 +21,14 @@ body {
   .header-title {
     @apply text-3xl font-bold mb-2 tracking-tight drop-shadow-sm;
   }
-  /* Theme-specific title colors */
+
+  /* THEME: Christmas Red (Morning) / Christmas Green (Night) */
   .theme-morning .header-title {
-    @apply text-pink-500;
-  }
-  .theme-night .header-title {
     @apply text-red-500;
+  }
+
+  .theme-night .header-title {
+    @apply text-green-500;
   }
 
   .header-subtitle {
@@ -33,11 +38,13 @@ body {
   .heart-icon {
     @apply text-base;
   }
+
   .theme-morning .heart-icon {
-    @apply text-pink-700;
+    @apply text-red-600;
   }
+
   .theme-night .heart-icon {
-    @apply text-red-800;
+    @apply text-green-600;
   }
 
   .main-content {
@@ -47,11 +54,13 @@ body {
   .app-footer {
     @apply mt-10 text-sm text-center;
   }
+
   .theme-morning .app-footer {
-    @apply text-pink-500/70;
+    @apply text-red-500/70;
   }
+
   .theme-night .app-footer {
-    @apply text-red-500/60;
+    @apply text-green-500/60;
   }
 
   /* --- Message Content (Inside Card) --- */
@@ -70,13 +79,15 @@ body {
   /* --- Scratch Card Component --- */
   .card-wrapper {
     @apply relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden mx-auto border-2;
-    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5); /* Tailwind arbitrary value moved to standard CSS */
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5);
   }
+
   .theme-morning .card-wrapper {
-    @apply border-pink-800/30;
+    @apply border-red-800/30;
   }
+
   .theme-night .card-wrapper {
-    @apply border-red-900/30;
+    @apply border-green-900/30;
   }
 
   .hidden-layer {
@@ -86,42 +97,95 @@ body {
   .glow-effect {
     @apply absolute inset-0 opacity-30 bg-gradient-to-br;
   }
+
   .theme-morning .glow-effect {
-    @apply from-pink-600/20 via-transparent to-transparent;
+    @apply from-red-600/20 via-transparent to-transparent;
+
+    /* --- Hanging Decoration Animation --- */
+    @keyframes swing {
+      0% {
+        transform: rotate(15deg);
+      }
+
+      100% {
+        transform: rotate(-15deg);
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .animate-swing {
+      animation: swing 3s ease-in-out infinite alternate;
+      transform-origin: top center;
+    }
+
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    /* Stagger delays for more natural feel */
+    .delay-100 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-200 {
+      animation-delay: 0.5s;
+    }
+
+    .delay-300 {
+      animation-delay: 1.2s;
+    }
+
+    .delay-500 {
+      animation-delay: 2.5s;
+    }
   }
+
   .theme-night .glow-effect {
-    @apply from-red-900/40 via-transparent to-transparent;
+    @apply from-green-900/40 via-transparent to-transparent;
   }
 
   .scratch-canvas {
     @apply absolute inset-0 z-20 touch-none transition-opacity duration-1000;
   }
+
   .scratch-canvas.revealed {
     @apply opacity-0 pointer-events-none;
   }
-  /* ... (all your existing styles) ... */
-  /* ... (app-container, header-title, card-wrapper, etc...) ... */
 
-  /* --- NEW: Save Button (on top of card) --- */
+  /* --- Buttons & Inputs --- */
   .save-button {
-    @apply absolute bottom-4 right-4 z-30; /* Sits INSIDE the card */
+    @apply absolute bottom-4 right-4 z-30;
+    /* Sits INSIDE the card */
     @apply bg-zinc-700 text-white text-xs font-bold;
     @apply py-2 px-3 rounded-lg shadow-lg;
     @apply transition-all duration-300 ease-in-out;
     @apply hover:bg-zinc-600 hover:-translate-y-0.5;
   }
+
   .save-button:disabled {
-    @apply bg-pink-800 text-pink-200; /* Cute "saved" confirmation color */
+    @apply bg-zinc-800 text-zinc-400;
+    /* Neutral saved state */
     @apply opacity-100 cursor-not-allowed;
   }
 
-  /* --- NEW: Footer Memory Button --- */
+  /* --- Footer Memory Button --- */
   .memory-box-button {
     @apply text-zinc-500 text-sm font-medium cursor-pointer;
     @apply transition-colors hover:text-zinc-400;
   }
 
-  /* --- NEW: Memory Box Page --- */
+  /* --- Memory Box / Voucher Container --- */
   .memory-box-container {
     @apply w-full max-w-sm text-zinc-200;
     @apply bg-zinc-900 shadow-xl rounded-2xl;
@@ -133,17 +197,21 @@ body {
   .memory-box-header {
     @apply flex justify-between items-center pb-3 border-b border-zinc-700;
   }
+
   .memory-box-title {
     @apply text-lg font-semibold;
   }
+
   .close-button {
     @apply text-3xl text-zinc-500 font-light;
     @apply transition-colors hover:text-white;
-    line-height: 1; /* Aligns the 'x' better */
+    line-height: 1;
+    /* Aligns the 'x' better */
   }
 
   .notes-list {
-    @apply max-h-[60vh] overflow-y-auto mt-4 pr-2; /* Scrollable list */
+    @apply max-h-[60vh] overflow-y-auto mt-4 pr-2;
+    /* Scrollable list */
   }
 
   .empty-message {
@@ -153,11 +221,13 @@ body {
   .note-card {
     @apply bg-zinc-800 p-4 rounded-lg mb-3;
     @apply border border-zinc-700 transition-all;
-    @apply hover:border-pink-600/50;
+    @apply hover:border-red-600/50;
   }
+
   .note-text {
     @apply text-zinc-100 text-base mb-2;
   }
+
   .note-date {
     @apply text-xs font-medium;
   }
@@ -168,9 +238,27 @@ body {
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* --- 3D Flip Animation --- */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
   }
 }

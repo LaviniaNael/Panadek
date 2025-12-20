@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import ScratchCard from "./assets/ScratchCard";
 
 import { morningMessages, nightMessages } from "./assets/messages";
-import VoucherBook from "./assets/VoucherBook"
+import HangingDecorations from "./assets/HangingDecorations";
+import VoucherBook from "./assets/VoucherBook";
 
 // Define the shape of a saved note
 export type SavedNote = {
@@ -92,25 +93,26 @@ const App: React.FC = () => {
     <div
       className={`app-container ${isMorning ? "theme-morning" : "theme-night"}`}
     >
+      <HangingDecorations isMorning={isMorning} />
       <header className="app-header">
         <h1 className="header-title">
-          {isMorning ? "Morning, Panadek." : "Good evening, Panadek."}
+          {isMorning ? "Merry Christmas, Panadek! 🎄" : "Cozy Christmas Night, Panadek. ❄️"}
         </h1>
         {/* NEW: Points Badge */}
         <div
           onClick={() => setView('vouchers')}
           className={`cursor-pointer inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border mt-2
-                ${isMorning ? 'bg-green-900/30 border-green-500/50 text-green-300' : 'bg-red-900/30 border-red-500/50 text-red-300'}`}
+                ${isMorning ? 'bg-red-900/30 border-red-500/50 text-red-300' : 'bg-green-900/30 border-green-500/50 text-green-300'}`}
         >
           <span>💎 {points} Love Points</span>
         </div>
         <p className="header-subtitle">
-          <span className="heart-icon">♥</span>
+          <span className="heart-icon">{isMorning ? "🎄" : "❄️"}</span>
           {isMorning ? "Start your day with me." : "End your day with love."}
-          <span className="heart-icon">♥</span>
+          <span className="heart-icon">{isMorning ? "🎄" : "❄️"}</span>
         </p>
         {/* 🛠️ TEMPORARY DEBUG TOOLS (Delete this block before sending to him!) */}
-        
+
         {/* <div className="fixed bottom-4 left-4 flex flex-col gap-2 z-50 opacity-70 hover:opacity-100">
 
           <button
@@ -192,7 +194,7 @@ const App: React.FC = () => {
         )}
         <div className="mt-4">
           For my baby{" "}
-          <span className={isMorning ? "text-zinc-200" : "text-red-500"}>
+          <span className={isMorning ? "text-red-500" : "text-green-500"}>
             {" "}
             ♥
           </span>

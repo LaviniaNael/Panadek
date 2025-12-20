@@ -27,10 +27,10 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
     revealAudioRef.current.volume = 0.6;
 
     return () => {
-        scratchAudioRef.current?.pause();
-        revealAudioRef.current?.pause();
-        scratchAudioRef.current = null;
-        revealAudioRef.current = null;
+      scratchAudioRef.current?.pause();
+      revealAudioRef.current?.pause();
+      scratchAudioRef.current = null;
+      revealAudioRef.current = null;
     };
   }, []);
 
@@ -42,21 +42,21 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
 
     const rect = canvas.parentElement?.getBoundingClientRect();
     if (rect) {
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+      canvas.width = rect.width;
+      canvas.height = rect.height;
     }
 
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
     if (isMorning) {
-        // Morning: Pink / Rose Foil
-        gradient.addColorStop(0, '#be185d');
-        gradient.addColorStop(0.5, '#f472b6');
-        gradient.addColorStop(1, '#be185d');
+      // Morning: Christmas Red Foil
+      gradient.addColorStop(0, '#dc2626');
+      gradient.addColorStop(0.5, '#ef4444');
+      gradient.addColorStop(1, '#dc2626');
     } else {
-        // Night: Deep Red Foil
-        gradient.addColorStop(0, '#7f1d1d');
-        gradient.addColorStop(0.5, '#dc2626');
-        gradient.addColorStop(1, '#7f1d1d');
+      // Night: Christmas Green Foil
+      gradient.addColorStop(0, '#15803d');
+      gradient.addColorStop(0.5, '#22c55e');
+      gradient.addColorStop(1, '#15803d');
     }
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -64,15 +64,15 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
     const noiseDensity = 0.15;
     const numberOfSpecks = (canvas.width * canvas.height) * noiseDensity * 0.05;
     for (let i = 0; i < numberOfSpecks; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const size = Math.random() * 2 + 0.5;
-        if (Math.random() > 0.5) {
-             ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-        } else {
-             ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        }
-        ctx.fillRect(x, y, size, size);
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const size = Math.random() * 2 + 0.5;
+      if (Math.random() > 0.5) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      } else {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+      }
+      ctx.fillRect(x, y, size, size);
     }
 
     ctx.font = 'bold 20px tracking-widest sans-serif';
@@ -81,7 +81,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
     ctx.shadowBlur = 4;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(isMorning ? "RUB FOR LOVE" : "SCRATCH ME", canvas.width / 2, canvas.height / 2);
+    ctx.fillText(isMorning ? "MERRY CHRISTMAS" : "SCRATCH FOR GIFT", canvas.width / 2, canvas.height / 2);
     ctx.shadowBlur = 0;
   }, [isMorning]);
 
@@ -89,16 +89,16 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
   const getPos = (e: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
-    
+
     const rect = canvas.getBoundingClientRect();
-    
+
     let clientX, clientY;
     if ('touches' in e) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
     } else {
-        clientX = e.clientX;
-        clientY = e.clientY;
+      clientX = e.clientX;
+      clientY = e.clientY;
     }
 
     // Scale coordinates in case the canvas CSS size is different from its pixel size
@@ -106,8 +106,8 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
     const scaleY = canvas.height / rect.height;
 
     return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
     };
   };
 
@@ -115,7 +115,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
     isDrawing.current = true;
     lastPos.current = getPos(e);
     if (!isRevealed) {
-        scratchAudioRef.current?.play().catch(() => {}); 
+      scratchAudioRef.current?.play().catch(() => { });
     }
   };
 
@@ -163,10 +163,10 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
     if (transparentPixels / (canvas.width * canvas.height) > 0.45) {
       setIsRevealed(true);
       scratchAudioRef.current?.pause();
-      revealAudioRef.current?.play().catch(() => {});
-      
+      revealAudioRef.current?.play().catch(() => { });
+
       if (onReveal) {
-        onReveal(); 
+        onReveal();
       }
     }
   };
@@ -178,37 +178,37 @@ const ScratchCard: React.FC<ScratchCardProps> = ({ isMorning, message, onSave, o
 
   return (
     <div className="card-wrapper relative">
-        <div className="hidden-layer">
-            <div className="glow-effect" />
-            <div className="relative z-10">
-                <div className="message-container">
-                    <span className="message-icon">{isMorning ? '🌸' : '🌹'}</span>
-                    <p className="message-text">"{message}"</p>
-                </div>
-            </div>
+      <div className="hidden-layer">
+        <div className="glow-effect" />
+        <div className="relative z-10">
+          <div className="message-container">
+            <span className="message-icon">{isMorning ? '🎅' : '🎄'}</span>
+            <p className="message-text">"{message}"</p>
+          </div>
         </div>
+      </div>
 
-        <canvas
-            ref={canvasRef}
-            className={`scratch-canvas ${isRevealed ? 'revealed' : ''}`}
-            onMouseDown={startScratching}
-            onTouchStart={startScratching}
-            onMouseMove={scratch}
-            onTouchMove={scratch}
-            onMouseUp={stopScratching}
-            onTouchEnd={stopScratching}
-            onMouseLeave={stopScratching}
-        />
+      <canvas
+        ref={canvasRef}
+        className={`scratch-canvas ${isRevealed ? 'revealed' : ''}`}
+        onMouseDown={startScratching}
+        onTouchStart={startScratching}
+        onMouseMove={scratch}
+        onTouchMove={scratch}
+        onMouseUp={stopScratching}
+        onTouchEnd={stopScratching}
+        onMouseLeave={stopScratching}
+      />
 
-        {isRevealed && (
-            <button
-                className="save-button"
-                onClick={handleSaveClick}
-                disabled={isSaved}
-            >
-                {isSaved ? 'Saved! 🤍' : 'Save this note 🤍'}
-            </button>
-        )}
+      {isRevealed && (
+        <button
+          className="save-button"
+          onClick={handleSaveClick}
+          disabled={isSaved}
+        >
+          {isSaved ? 'Saved! 🤍' : 'Save this note 🤍'}
+        </button>
+      )}
     </div>
   );
 };

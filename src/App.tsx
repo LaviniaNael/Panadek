@@ -93,7 +93,7 @@ const App: React.FC = () => {
     <div
       className={`app-container ${isMorning ? "theme-morning" : "theme-night"}`}
     >
-      <HangingDecorations isMorning={isMorning} />
+      <HangingDecorations />
       <header className="app-header">
         <h1 className="header-title">
           {isMorning ? "Merry Christmas, Panadek! 🎄" : "Cozy Christmas Night, Panadek. ❄️"}

@@ -1,10 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 
-interface HangingDecorationsProps {
-    isMorning: boolean;
-}
+interface HangingDecorationsProps { }
 
-const HangingDecorations: React.FC<HangingDecorationsProps> = ({ isMorning }) => {
+const HangingDecorations: React.FC<HangingDecorationsProps> = () => {
     // Define decorations with different positions, lengths, delays, and durations for a natural feel
     const decorations = [
         { left: '10%', height: 'h-24', delay: '0s', duration: '2.5s', icon: '🎄', size: 'text-3xl' },

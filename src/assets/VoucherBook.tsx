@@ -138,6 +138,7 @@ const VoucherBook: React.FC<VoucherBookProps> = ({ onClose, points, deductPoints
     const themeBg = isMorning ? 'bg-red-600' : 'bg-green-600';
     const themeBorder = isMorning ? 'border-red-500' : 'border-green-500';
     const themeHover = isMorning ? 'hover:bg-red-700' : 'hover:bg-green-700';
+    const scrollTheme = isMorning ? 'scrollbar-voucher-red' : 'scrollbar-voucher-green';
 
     const renderSavedNotes = () => (
         <div className="flex flex-col h-full bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
@@ -145,7 +146,8 @@ const VoucherBook: React.FC<VoucherBookProps> = ({ onClose, points, deductPoints
                 <h2 className={`memory-box-title ${themeColor}`}>Your Saved Notes</h2>
                 <button onClick={onClose} className="close-button">&times;</button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className={`flex-1 overflow-y-auto p-4 ${scrollTheme}`}>
+
                 {notes.length === 0 ? (
                     <div className="text-center text-zinc-500 mt-20">
                         <p>No saved notes yet.</p>
@@ -177,7 +179,8 @@ const VoucherBook: React.FC<VoucherBookProps> = ({ onClose, points, deductPoints
                 <p className="text-zinc-400 text-sm">Current Love Points</p>
                 <div className={`text-4xl font-bold ${themeColor} mt-1`}>{points}</div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 pb-20">
+            <div className={`flex-1 overflow-y-auto p-4 pb-20 ${scrollTheme}`}>
+
                 {AVAILABLE_VOUCHERS.map((voucher) => {
                     const ownedCount = redeemedIds.filter(id => id === voucher.id).length;
                     const canAfford = points >= voucher.cost;
@@ -229,7 +232,7 @@ const VoucherBook: React.FC<VoucherBookProps> = ({ onClose, points, deductPoints
                 <h2 className={`memory-box-title ${themeColor}`}>Used Coupons</h2>
                 <button onClick={onClose} className="close-button">&times;</button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 pb-20">
+            <div className={`flex-1 overflow-y-auto p-4 pb-20 ${scrollTheme}`}>
                 {history.length === 0 ? (
                     <div className="text-center text-zinc-500 mt-20">
                         <p>No history yet.</p>
@@ -263,7 +266,8 @@ const VoucherBook: React.FC<VoucherBookProps> = ({ onClose, points, deductPoints
     );
 
     return (
-        <div className="relative w-full max-w-[90vw] sm:max-w-sm h-[70vh] mx-auto [perspective:1000px] z-20">
+        <div className={`relative w-full max-w-[95vw] sm:max-w-md md:max-w-lg h-[80vh] max-h-[90vh] mx-auto overflow-y-auto [perspective:1000px] z-20 ${scrollTheme}`}>
+
             <div className={`relative w-full h-full transition-all duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
 
                 {/* FRONT FACE */}

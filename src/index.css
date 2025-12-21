@@ -261,4 +261,41 @@ body {
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+
+  /* --- Themed Scrollbars for Voucher Book --- */
+  .scrollbar-voucher-red {
+    scrollbar-width: thin;
+    scrollbar-color: #ef4444 #18181b;
+  }
+
+  .scrollbar-voucher-red::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-voucher-red::-webkit-scrollbar-track {
+    background: #18181b;
+  }
+
+  .scrollbar-voucher-red::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #ef4444, #b91c1c);
+    border-radius: 9999px;
+  }
+
+  .scrollbar-voucher-green {
+    scrollbar-width: thin;
+    scrollbar-color: #22c55e #18181b;
+  }
+
+  .scrollbar-voucher-green::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-voucher-green::-webkit-scrollbar-track {
+    background: #18181b;
+  }
+
+  .scrollbar-voucher-green::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #22c55e, #15803d);
+    border-radius: 9999px;
+  }
 }

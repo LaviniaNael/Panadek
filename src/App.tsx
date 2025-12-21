@@ -18,6 +18,7 @@ const App: React.FC = () => {
   const [todaysMessage, setTodaysMessage] = useState<string>("");
   const [points, setPoints] = useState<number>(0);
   const [view, setView] = useState<'card' | 'memory' | 'vouchers'>('card');
+  const [toast, setToast] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -30,6 +31,22 @@ const App: React.FC = () => {
       const randomIndex = Math.floor(Math.random() * messagesList.length);
       setTodaysMessage(messagesList[randomIndex]);
     }
+
+    // Load Love Points from localStorage
+    const loadPoints = () => {
+      try {
+        const saved = localStorage.getItem('lovePoints');
+        if (saved) setPoints(Number(saved));
+      } catch {
+        // localStorage unavailable (private browsing, etc.)
+      }
+    };
+    loadPoints();
+
+    // Sync when window regains focus (mobile switch tabs, etc.)
+    const handleFocus = () => loadPoints();
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
   // NEW: Logic to award points (Max 2 per day)
   const handleCardReveal = () => {
@@ -37,25 +54,41 @@ const App: React.FC = () => {
     // Unique key for this specific slot (e.g. "12/20/2025-morning")
     const sessionKey = `${today}-${isMorning ? 'morning' : 'night'}`;
 
-    const awardedSessions = JSON.parse(localStorage.getItem('awardedSessions') || '[]');
+    let awardedSessions: string[] = [];
+    try {
+      awardedSessions = JSON.parse(localStorage.getItem('awardedSessions') || '[]');
+    } catch {
+      // localStorage unavailable
+    }
 
     // If he hasn't earned points for this specific session yet...
     if (!awardedSessions.includes(sessionKey)) {
       const newPoints = points + 1;
       setPoints(newPoints);
-      localStorage.setItem('lovePoints', newPoints.toString());
+      try {
+        localStorage.setItem('lovePoints', newPoints.toString());
+        awardedSessions.push(sessionKey);
+        localStorage.setItem('awardedSessions', JSON.stringify(awardedSessions));
+      } catch {
+        // localStorage unavailable
+      }
 
-      awardedSessions.push(sessionKey);
-      localStorage.setItem('awardedSessions', JSON.stringify(awardedSessions));
-
-      setTimeout(() => alert("You earned 1 Love Point! ❤️"), 500);
+      setTimeout(() => {
+        setPoints(newPoints); // Ensure UI updates immediately
+        setToast("You earned 1 Love Point! ❤️");
+        setTimeout(() => setToast(null), 3000);
+      }, 500);
     }
   };
 
   const handleDeductPoints = (amount: number) => {
     const newPoints = points - amount;
     setPoints(newPoints);
-    localStorage.setItem('lovePoints', newPoints.toString());
+    try {
+      localStorage.setItem('lovePoints', newPoints.toString());
+    } catch {
+      // localStorage unavailable
+    }
   };
   // UPDATED: Function to save a note to localStorage
   const handleSaveNote = (message: string) => {
@@ -93,6 +126,20 @@ const App: React.FC = () => {
     <div
       className={`app-container ${isMorning ? "theme-morning" : "theme-night"}`}
     >
+      {/* Toast */}
+      {toast && (
+        <div
+          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-white font-bold text-sm shadow-lg animate-pulse bg-gradient-to-r"
+          style={{
+            background: isMorning
+              ? 'linear-gradient(to right, #dc2626, #b91c1c)'
+              : 'linear-gradient(to right, #16a34a, #15803d)',
+          }}
+          onClick={() => setToast(null)}
+        >
+          {toast}
+        </div>
+      )}
       <HangingDecorations />
       <header className="app-header">
         <h1 className="header-title">
